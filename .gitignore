@@ -17,7 +17,7 @@ __pycache__/
 
 static/
 posts/static/
-/sent_emails
+sent_emails/
 db.sqlite3
-/yatube/tests/
-/yatube/pytest.ini
+yatube/tests/
+yatube/pytest.ini
