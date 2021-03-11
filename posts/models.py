@@ -24,17 +24,17 @@ class Post(models.Model):
         related_name="posts")
     group = models.ForeignKey(
         Group,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         blank=True,
         null=True,
         related_name="posts")
 
     def __str__(self):
         return (
-            f'AUTHOR: {self.author} '
+            f'AUTHOR: {self.author.username} '
             f'GROUP: {self.group} '
             f'DATE: {self.pub_date.strftime("%d-%m-%Y-%H.%M.%S")} '
-            f'TEXT: {self.text[0:15]} ...'
+            f'TEXT: {self.text[0:15]}...'
         )
 
     class Meta:

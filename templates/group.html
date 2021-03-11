@@ -2,8 +2,8 @@
 {% block title %}Записи сообщества {{group.title}}{% endblock %}
 {% block header %}{{group.title}}{% endblock %}
 {% block content %}
-    
-<p>{{ group.description|linebreaksbr }}</p>  
+
+  <p>{{ group.description|linebreaksbr }}</p>
   {% for post in posts %}
     <h3>
     Автор: {{ post.author.get_full_name }},
@@ -12,5 +12,4 @@
     <p>{{ post.text|linebreaksbr }}</p>
     <hr>
   {% endfor %}
-
-{% endblock %} 
+{% endblock %}
