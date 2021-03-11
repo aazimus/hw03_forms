@@ -21,3 +21,4 @@ sent_emails/
 db.sqlite3
 yatube/tests/
 yatube/pytest.ini
+.vscode/
