@@ -9,15 +9,15 @@
         {% csrf_token %}
         <div class="form-group center">
           {%for field in form%}
-          <div class="col-md-6">
-            <div class="form-group row">
-              <div>{{ field }}</div>
+            <div class="col-md-6">
+              <div class="form-group row">
+                {{ field }}
+              </div>
             </div>
-          </div>
           {%endfor%}
           <div class="col-md-6 "> 
             <button type="submit" class="btn btn-primary">
-            Отправить
+              Отправить
             </button> 
           </div>
         </div>  
