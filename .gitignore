@@ -22,3 +22,8 @@ db.sqlite3
 yatube/tests/
 yatube/pytest.ini
 .vscode/
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+*.cover
