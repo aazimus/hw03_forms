@@ -1,5 +1,4 @@
 # posts/tests/tests_url.py
-from django.conf.urls import url
 from posts.views import index
 from django.test import TestCase, Client
 from django.urls import reverse
@@ -30,37 +29,31 @@ class Test_Client_Url(TestCase):
             description = 'Описание группы'
         )
 
-        #cls.urls_code = {            
-        #reverse('index',args= None):[200,200],
-        #reverse('new_post',args=None):[302,200],
-        #reverse("group_posts",args= [Test_Client_Url.group.slug]):[200,200]
-        #}
-
-        cls.urls_code = {            
+ 
+        cls.urls_code_args = {            
         'index':[200,200,None],
         'new_post':[302,200,None],
-        'group_posts':[200,200,Test_Client_Url.group.slug]
+        "group_posts":[200,200,Test_Client_Url.group.slug]
         }
 
-    def rev(self,url_name,argument = None):
-        #url_name = self.url_name
-        #argument = self.argument
-        return reverse(url_name, args= self.argument )
-        
     def test_home_url_exists_at_desired_location(self):
-        """Тесты на не авторизтрованного пользователя прошли"""
-                        
-        for urls,none_user_code in Test_Client_Url.urls_code.items():
+        """Тесты на не авторизтрованного пользователя прошли"""                        
+        for urls,none_user_code in Test_Client_Url.urls_code_args.items():
             with self.subTest():
-                response = self.guest_client.get(Test_Client_Url.rev(urls,none_user_code[2]))
+                if none_user_code[2]:
+                    response = Test_Client_Url.guest_client.get(reverse(urls,args=[none_user_code[2]]))
+                else:
+                    response = Test_Client_Url.guest_client.get(reverse(urls))    
                 self.assertEqual(response.status_code,none_user_code[0])         
-
     
     def test_home_url_user_location(self):
         """Тесты на авторизированного пользователя прошли"""
-        for urls, authorized_user_code in Test_Client_Url.urls_code.items():
+        for urls, authorized_user_code in Test_Client_Url.urls_code_args.items():
             with self.subTest():
-                response = self.authorized_client.get(urls)
+                if authorized_user_code[2]:
+                    response = Test_Client_Url.guest_client.get(reverse(urls,args=[authorized_user_code[2]]))
+                else:    
+                    response = Test_Client_Url.authorized_client.get(reverse(urls))
                 self.assertEqual(response.status_code,authorized_user_code[1]) 
 
     def test_urls_uses_correct_template(self):
@@ -68,8 +61,8 @@ class Test_Client_Url(TestCase):
         templates_url_names = {
         'index.html': reverse('index'),
         'new.html': reverse('new_post'),
-        #'group.html': reverse('group_posts',args= [Test_Client_Url.group.slug])
-        'group.html': '/group/test-slug/'
+        'group.html': reverse('group_posts',args= [Test_Client_Url.group.slug])
+        
         }
         for template, reverse_name in templates_url_names.items():
             with self.subTest():
