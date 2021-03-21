@@ -3,7 +3,7 @@ from posts.views import index
 from django.test import TestCase, Client
 from django.urls import reverse
 #from django.urls import include, path
-from posts.models import Post,Group, User
+from posts.models import Group, User
 
 class StaticURLTests(TestCase):
     def setUp(self):
