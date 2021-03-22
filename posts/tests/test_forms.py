@@ -29,29 +29,23 @@ class PostCreateFormTests(TestCase):
 
     def test_create_post(self):
         """Валидная форма создает запись в Post."""
-        
         post_count = Post.objects.count()
-
         form_data = {
             'text':'text',
-            'group': 'gruup',  
-            'author': 'author',
-            'slug' :'sllll',
+            'group': PostCreateFormTests.group.id,  
+            'author' : self.user 
         }
         # Отправляем POST-запрос
-        
         response = self.authorized_client.post(
             reverse('new_post'),
             data=form_data,
             follow=False
         ) 
-              
         self.assertRedirects(response, reverse('index'))       
         self.assertEqual(Post.objects.count(), post_count+1)       
         self.assertTrue(
             Post.objects.filter(
-                slug='test-slug',
-                text='Текст вашего поста',
-                description='Описание группы'
+                text='text',
+                group = PostCreateFormTests.group.id
                 ).exists()
         )
