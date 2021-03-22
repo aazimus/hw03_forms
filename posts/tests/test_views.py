@@ -37,9 +37,7 @@ class ViewModelTest(TestCase):
             group = cls.group,
             author = User.objects.create(username ='artur')
         )
-       
-
-       
+           
     def setUp(self):
         self.user = User.objects.create_user(username='test-user') 
         self.authorized_client = Client()
@@ -61,14 +59,13 @@ class ViewModelTest(TestCase):
     def test_home_page_shows_correct_context(self):
         """Проверка главной страницы  на шаблон""" 
         response = self.authorized_client.get(reverse('index'))
-        post_object = response.context['posts'][0]
+        post_object = response.context['page'][0]
         post_author_0 = post_object.author
         post_pub_date_0 = post_object.pub_date
         post_text_0 = post_object.text
 
-
         response2 = self.authorized_client.get(reverse('index'))
-        post_object2 = response2.context['posts'][1]
+        post_object2 = response2.context['page'][1]
         post_author_1 = post_object2.author
         post_pub_date_1 = post_object2.pub_date
         post_text_1 = post_object2.text
@@ -107,22 +104,59 @@ class ViewModelTest(TestCase):
     def test_create_new_post(self):
         """Посты совападют """  
         last_post = Post.objects.order_by("-pub_date")[0:1] 
-        self.assertEqual(ViewModelTest.posts,last_post.get())
+        self.assertEqual(ViewModelTest.posts, last_post.get())
         
     def test_index_create_new_post(self):
         """ Новый пост появляется на странице index """
         response = self.authorized_client.get(reverse('index'))
-        post_object = response.context['posts'][0]
+        post_object = response.context['page'][0]
         post_text_index = post_object
         last_post = Post.objects.order_by("-pub_date")[0:1]
-        self.assertEqual(post_text_index,last_post.get())
+        self.assertEqual(post_text_index, last_post.get())
 
     def test_new_post_group_identification(self):
         """ Новый пост  не  появляетя не в своей группе """
-        response = self.authorized_client.get(reverse('group_posts',args= [ViewModelTest.group2.slug]))
+        response = self.authorized_client.get(reverse('group_posts', args =[ViewModelTest.group2.slug]))
         post_object2 = response.context['posts'][0]
         last_post = Post.objects.order_by("-pub_date")[0:1]
-        self.assertNotEqual(post_object2,last_post.get())
+        self.assertNotEqual(post_object2, last_post.get())
         
 
         #__import__('pdb').set_trace()
+
+class PaginatorViewsTest(TestCase):
+    
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.array_group = []
+        for index_group in range(13):
+            PaginatorViewsTest.array_group.append( Group.objects.create(
+                title = f'Название группы{index_group}',
+                slug = f'Test-slug{index_group}',
+                description = f'Test-slug{index_group}'
+                )
+            )
+        cls.array_posts = []
+        for index_posts in range(13):
+            username_par = f'Пользователь {index_posts}'
+            PaginatorViewsTest.array_posts.append(Post.objects.create(
+            text = f'Текст вашего поста{index_posts}',
+            group = PaginatorViewsTest.array_group[index_posts],
+            author = User.objects.create(username = username_par )
+            )
+        )            
+    # Здесь создаются фикстуры: клиент и 13 тестовых записей.
+    
+    def test_first_page_containse_ten_records(self):
+        """Проверка правильной работы пагинатора 1ая страница"""
+        response = self.client.get(reverse('index'))
+        # Проверка: количество постов на первой странице равно 10.
+       
+        self.assertEqual(len(response.context.get('page').object_list), 10)
+
+    def test_second_page_containse_three_records(self):
+        """Проверка правильной работы пагинатора 2ая страница"""
+        # Проверка: на второй странице должно быть три поста.
+        response = self.client.get(reverse('index') + '?page=2')
+        self.assertEqual(len(response.context.get('page').object_list), 3) 

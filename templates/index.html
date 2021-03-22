@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 {% block title %}Лента{% endblock %}
-{% block header %}Последние обновления на сайте{% endblock %}
-{% block content %}
 
-  {% for post in posts %}
+{% block content %}
+  <h1> Последние обновления на сайте<h1>
+  {% for post in page %}
     <h3>
       Автор: {{ post.author.get_full_name }},
       Дата публикации: {{ post.pub_date|date:"d M Y" }}
@@ -13,4 +13,5 @@
       <hr>
     {% endif %}
   {% endfor %}
+  {% include "paginator.html" %}
 {% endblock %}
