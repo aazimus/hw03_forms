@@ -3,6 +3,9 @@ from django.urls import include, path
 
 urlpatterns = [
 
+    path('about/', include('about.urls', namespace='about')),
+
+
     path("auth/", include("users.urls")),
 
 

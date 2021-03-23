@@ -1,12 +1,11 @@
-from posts.views import new_post
-from django.http import response
-from django import forms  
+from django import forms
 from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
 from django.urls import reverse
 from time import sleep
 
 from posts.models import User,Group,Post
+from posts.views import new_post
 
 User = get_user_model()
 
@@ -66,10 +65,9 @@ class ViewModelTest(TestCase):
 
         response2 = self.authorized_client.get(reverse('index'))
         post_object2 = response2.context['page'][1]
-        post_author_1 = post_object2.author
-        post_pub_date_1 = post_object2.pub_date
-        post_text_1 = post_object2.text
-
+        #post_author_1 = post_object2.author
+        #post_pub_date_1 = post_object2.pub_date
+        #post_text_1 = post_object2.text
         #__import__('pdb').set_trace()        
         self.assertEqual(post_author_0.username, ViewModelTest.posts.author.username)
         self.assertEqual(post_text_0, ViewModelTest.posts.text)
@@ -102,7 +100,7 @@ class ViewModelTest(TestCase):
                 self.assertIsInstance(form_field, expected)       
 
     def test_create_new_post(self):
-        """Посты совападют """  
+        """ Посты совападют """
         last_post = Post.objects.order_by("-pub_date")[0:1] 
         self.assertEqual(ViewModelTest.posts, last_post.get())
         
@@ -120,9 +118,6 @@ class ViewModelTest(TestCase):
         post_object2 = response.context['posts'][0]
         last_post = Post.objects.order_by("-pub_date")[0:1]
         self.assertNotEqual(post_object2, last_post.get())
-        
-
-        #__import__('pdb').set_trace()
 
 class PaginatorViewsTest(TestCase):
     
@@ -150,13 +145,10 @@ class PaginatorViewsTest(TestCase):
     
     def test_first_page_containse_ten_records(self):
         """Проверка правильной работы пагинатора 1ая страница"""
-        response = self.client.get(reverse('index'))
-        # Проверка: количество постов на первой странице равно 10.
-       
+        response = self.client.get(reverse('index'))       
         self.assertEqual(len(response.context.get('page').object_list), 10)
 
     def test_second_page_containse_three_records(self):
         """Проверка правильной работы пагинатора 2ая страница"""
-        # Проверка: на второй странице должно быть три поста.
         response = self.client.get(reverse('index') + '?page=2')
         self.assertEqual(len(response.context.get('page').object_list), 3) 
