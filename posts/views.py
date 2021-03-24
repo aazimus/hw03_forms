@@ -43,20 +43,28 @@ def profile(request, username):
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
     post_count = post_list.count()
-    
 
     return render(
          request,
          'profile.html',
-         {'user':user,'page': page,
+         {'user': user,
+         'page': page,
          'post_count': post_count,},
-     )
-    #return render(request, 'profile.html', {})
+    )
 
 
 def post_view(request, username, post_id):
-    # тут тело функции
-    return render(request, 'post.html', {})
+    user = get_object_or_404(User, username=username)
+    post = get_object_or_404(Post,id = post_id)
+    post_list = Post.objects.filter(author = user)
+    post_count = post_list.count()
+    
+    return render(
+        request,
+        'post.html',
+        {'post': post,
+        'user': user,
+        'post_count': post_count})
 
 
 def post_edit(request, username, post_id):
